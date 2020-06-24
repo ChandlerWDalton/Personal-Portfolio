@@ -1,7 +1,46 @@
+body{
+    margin: 0;
+    padding: 0;
+    font-family: 'Krona One', sans-serif;
+}
+
+#navbar{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: black;
+    height: 2em;
+}
+
+    #navbar a {
+        padding-left: 1em;
+        padding-right: 1em;
+        color: white;
+        border-left: solid 1px white;
+        border-right: solid 1px white;
+        text-decoration: none;
+    }
+
+#welcome-section {
+    height: 100vh;
+    background-image: url(../images/Ocean\ Background.jpg);
+    background-repeat: no-repeat;
+    background-size: cover;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    color: white;
+}
+
 #projects {
     height: 100vh;
     background-color: black;
     display: flex;
     align-items: center;
     justify-content: space-around;
+}
+
+#projects img{
+    height: 20vh;
+    border-radius: 50%;
 }
