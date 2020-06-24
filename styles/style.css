@@ -10,6 +10,9 @@ body{
     align-items: center;
     background-color: black;
     height: 2em;
+    border: solid white 1px;
+    position: fixed;
+    width: 100%;
 }
 
     #navbar a {
