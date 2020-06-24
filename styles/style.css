@@ -4,6 +4,14 @@ body{
     font-family: 'Krona One', sans-serif;
 }
 
+@media screen and (max-width: 600px) {
+    #navbar {
+        float: none;
+        width: 100%;
+        display: block;
+    }
+}
+
 #navbar{
     display: flex;
     justify-content: center;
@@ -24,15 +32,30 @@ body{
         text-decoration: none;
     }
 
+    #navbar a:hover {
+        padding-left: 1em;
+        padding-right: 1em;
+        background-color: white;
+        color: black;
+        border-left: solid 1px white;
+        border-right: solid 1px white;
+        text-decoration: none;
+    }
+
 #welcome-section {
     height: 100vh;
     background-image: url(../images/Ocean\ Background.jpg);
     background-repeat: no-repeat;
     background-size: cover;
     display: flex;
-    justify-content: space-around;
+    justify-content: center;
     align-items: center;
     color: white;
+}
+
+#welcome-section h5{
+    font-weight: lighter;
+    margin: auto;
 }
 
 #projects {
