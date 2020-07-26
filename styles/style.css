@@ -106,3 +106,12 @@ body{
     font-size: small;
     border: whitesmoke solid .5px;
 }
+
+#starwars-headers {
+    background-color: black;
+    color: white;
+    padding-bottom: 1em;
+    padding-left: 1em;
+    padding-top: 2em;
+    border: whitesmoke solid 1px;
+}
