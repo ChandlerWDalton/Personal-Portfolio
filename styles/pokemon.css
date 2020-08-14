@@ -10,6 +10,11 @@ body{
         width: 100%;
         display: block;
     }
+
+    #pokemon{
+        width: 100vw;
+    }
+
 }
 
 #navbar{
@@ -45,7 +50,6 @@ body{
 #pokemon-headers {
     background-color: black;
     color: white;
-    padding-bottom: 1em;
     padding-left: 1em;
     padding-top: 2em;
     border: whitesmoke solid 1px;
@@ -53,7 +57,7 @@ body{
 
 #main {
     background-color: #32a887;
-    height: 83.8vh;
+    height: 86vh;
     width: 99.7%;
     border: black solid 2px;
 }
@@ -68,19 +72,32 @@ body{
 
 #battle {
     border-bottom: black 1px solid;
-    height: 60%;
+    height:55%;
+}
+
+#rival-screen {
+    height: 50%;
+    
 }
 
 #battle-top {
-    height: 50%;
     display: flex;
     justify-content: flex-end;
     align-items: center;
 }
 
-#battle-top img {
+.pokeball {
+    height: 20px;
+}
+
+.pokemon-sprite {
     height: 150px;
 }
+
+.trainer-sprite {
+    height: 150px;
+}
+
 
 #bottom {
     display: flex;
@@ -108,6 +125,19 @@ body{
     height: 150px;
 }
 
+.team-player {
+    border: black solid 2px;
+    border-radius: 10px;
+    text-align: center;
+    margin: .5em;
+}
+
+.team-player img {
+    margin: auto;
+    height: 100px;
+}
+
+
 #actions {
     border-top: black solid 1px;
     padding: .5em;
@@ -130,7 +160,7 @@ body{
 .moves div {
     border: black solid 2px;
     border-radius: 5px;
-    margin: 1em;
+    margin: .5em;
     padding-left: .5em;
     height: 90px;
     width: 145px;
@@ -151,6 +181,7 @@ body{
 
 .battleButton {
     background-color: black;
+    margin: .5em;
     color: white;
     height: 30px;
     font-family: 'Krona One', sans-serif;

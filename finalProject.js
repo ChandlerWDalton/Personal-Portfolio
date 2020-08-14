@@ -1,31 +1,35 @@
-const userPokemon = [];
-let activePokemon;
+var battleTop = document.querySelector('#battle-top');
+var battleBottom = document.querySelector('#battle-bottom');
+var actions = document.querySelector('#actions');
+var displayJournal = document.querySelector('#directory');
+var rivalScreen = document.querySelector('#rival-screen');
+
+let userPokemon = [];
+let activePokemon = {};
 let activePokemonMoves = [];
 let rivalsUsedPokemon = 0;
 let rivalPokemon;
 let rivalPokemonMoves = [];
 let userTurn = true;
-var battleTop = document.querySelector('#battle-top');
+let battleStarted = false;
+let canSetActive = true;
+
 let rivalTrainer = document.createElement('img');
 rivalTrainer.src = 'images/bluesprite.png';
-rivalTrainer.classList.add('sprite');
+rivalTrainer.classList.add('trainer-sprite');
 battleTop.append(rivalTrainer);
-
-var battleBottom = document.querySelector('#battle-bottom');
-var actions = document.querySelector('#actions');
 
 let trainer = document.createElement('img');
 trainer.src = 'images/redsprite.png'
 trainer.classList.add('sprite');
 battleBottom.append(trainer);
 
-var displayJournal = document.querySelector('#directory');
-
 let journal = document.createElement('h6');
 journal.append('Welcome to your Pokemon Battle! Start by selecting your team and hit that battle button when your team is ready!');
 displayJournal.append(journal);
 
 let intro = document.createElement('div');
+intro.classList.add('intro');
 let battle = document.createElement('button');
 battle.append('Battle');
 battle.classList.add('battleButton');
@@ -79,6 +83,7 @@ fetch('https://pokeapi.co/api/v2/pokemon?limit=1000')
         userPokemon.map(pokemon => {
             
             let teamPlayer = document.createElement('div');
+            teamPlayer.classList.add('team-player')
             let pokemonImage = document.createElement('img');
             let pokemonName = document.createElement('h5');
 
@@ -89,12 +94,13 @@ fetch('https://pokeapi.co/api/v2/pokemon?limit=1000')
             teamPlayer.append(pokemonName);
 
             teamPlayer.addEventListener('click', function() {
-                if (userPokemon.length = 3){
+                if(battleStarted === true && userTurn === true && canSetActive === true){
                     fetch('https://pokeapi.co/api/v2/pokemon/' + pokemon.name)
                         .then(response => response.json())
                         .then( async data => {
                             activePokemon = await data;
                             displayActivePokemon(data);
+                            canSetActive = false;
                         });
                 }
             })
@@ -138,9 +144,9 @@ async function getMoves(moveNames){
             .then(data => {
                 moves.push(data);
                 activePokemonMoves = moves;
+                mapMoves();
             })
     });
-    mapMoves();
 }
 
 async function mapMoves(){
@@ -156,8 +162,11 @@ async function mapMoves(){
         moveName.append(move.name);
         movePower.append(move.power);
         moveCard.append(moveName);
-        moveCard.append(movePower);
-
+        if (move.power !== null){
+            moveCard.append(movePower);
+        } else {
+            moveCard.append('-');
+        }
         moveCard.addEventListener('click', function() {
             if (userTurn === true){
                 battleSequence(move.power, move.name);
@@ -165,16 +174,16 @@ async function mapMoves(){
                 console.log('Its not your turn!');
             }
         })
-        // updateJournal('Choose your attack!');
         moves.append(moveCard);
 });
 
 }
 
 battle.addEventListener('click', function(){
+    battleStarted = true;
     generateRivalPokemon();
     battle.style.display = "none";
-    updateJournal('Choose your active Pokemon!')
+    updateJournal('Choose your active Pokemon and then your attack!')
 });
 
 async function generateRivalPokemon(){
@@ -195,6 +204,7 @@ async function displayRivalPokemon(rivalPokemon){
     while (battleTop.firstChild){
         battleTop.removeChild(battleTop.firstChild);
     }
+    let rivalPokemonDisplay = document.createElement('div');
     let rivalPokemonImg = document.createElement('img');
     let rivalDetails = document.createElement('div');
     rivalDetails.classList.add('pokemon-details');
@@ -202,17 +212,26 @@ async function displayRivalPokemon(rivalPokemon){
     let rivalPokemonHp = document.createElement('h6');
 
     rivalPokemonImg.src = rivalPokemon.sprites.front_default;
+    rivalPokemonImg.classList.add('pokemon-sprite');
     rivalPokemonName.append(rivalPokemon.name);
     rivalPokemonHp.append('HP: ')
     rivalPokemonHp.append(rivalPokemon.stats[0].base_stat);
     rivalDetails.append(rivalPokemonName);
     rivalDetails.append(rivalPokemonHp);
+    rivalPokemonDisplay.append(rivalPokemonImg);
     battleTop.append(rivalDetails);
-    battleTop.append(rivalPokemonImg);
+    battleTop.append(rivalPokemonDisplay);
+
+        for (let i = 0; i < 3 - rivalsUsedPokemon; i++) {
+        let pokeball = document.createElement('img')
+        pokeball.src = 'images/pokeball.png';
+        pokeball.classList.add('pokeball');
+        rivalPokemonDisplay.append(pokeball);
+    }
 }
 
 async function getRivalPokemonMove(){
-    setTimeout(function () {
+    updateJournal(rivalPokemon.name + ' is thinking...', false);
         try {
             fetch('https://pokeapi.co/api/v2/move/'+ rivalPokemon.moves[Math.floor(Math.random() * activePokemon.moves.length)].move.name)
             .then(response => response.json())
@@ -222,7 +241,6 @@ async function getRivalPokemonMove(){
         } catch {
            getRivalPokemonMove();
         }
-    }, 2000)
     
 }
 
@@ -242,13 +260,18 @@ async function battleSequence(movePower, moveName){
                 finishBattle('You Win!');
             }
         } else {
-            updateJournal(activePokemon.name + ' used ' + moveName + ' for ' + movePower + ' damage!', true);
+            if (movePower!== null){
+                updateJournal(activePokemon.name + ' used ' + moveName + ' for ' + movePower + ' damage!', true);
+            } else {
+                updateJournal(activePokemon.name + ' used ' + moveName + "! It doesn't seem like anything happened...", true);
+            }
             displayRivalPokemon(rivalPokemon);
         }
         userTurn = false;
     } else {
         activePokemon.stats[0].base_stat = await activePokemon.stats[0].base_stat - movePower;
         if (activePokemon.stats[0].base_stat <= 0){
+            canSetActive = true;
             let pos = userPokemon.map(function(data) {
                 return data.name; 
             }).indexOf(activePokemon.name);
@@ -261,11 +284,15 @@ async function battleSequence(movePower, moveName){
                 console.log(userPokemon.length);
                 updateJournal(rivalPokemon.name + ' used ' + moveName + ' for ' + movePower + ' damage!  ' + activePokemon.name + ' fainted!', false);
             } else {
-                updateJournal(rivalPokemon.name + ' used ' + moveName + ' for ' + movePower + ' damage!  ' + activePokemon.name + ' fainted!  You Lose!', false);
+                updateJournal(rivalPokemon.name + ' used ' + moveName + ' for ' + movePower + ' damage!  ' + activePokemon.name + ' fainted!', false);
                 finishBattle('You Lose...');
             }
         } else {
-            updateJournal(rivalPokemon.name + ' used ' + moveName + ' for ' + movePower + ' damage!', false);
+            if (movePower !== null){
+                updateJournal(rivalPokemon.name + ' used ' + moveName + ' for ' + movePower + ' damage!', false);
+            } else {
+                updateJournal(rivalPokemon.name + ' used ' + moveName + "! It doesn't seem like anything happened...", false);
+            }
             displayActivePokemon(activePokemon);
         }
         userTurn = true;
@@ -278,7 +305,9 @@ async function updateJournal(message, rivalTurn){
     }
     journal.append(message);
     if (rivalTurn === true){
-        getRivalPokemonMove();
+        setTimeout(function(){
+            getRivalPokemonMove();
+        }, 2000);
     }
 }
 
